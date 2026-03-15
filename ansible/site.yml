@@ -1,0 +1,31 @@
+---
+- name: Startup k3s control plane
+  hosts: master
+  become: yes
+  tasks:
+    - name: Download and install k3s to control plane node
+      shell: curl -sfL https://get.k3s.io | sh -
+      args:
+        creates: /etc/rancher/k3s/k3s.yaml
+
+    - name: Wait for node-token generation
+      wait_for:
+        path: /var/lib/rancher/k3s/server/node-token
+
+    - name: Read node-token 
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: node-token
+    
+    - name: Store token as a fact
+      set_fact:
+        k3s_token: "{{ node_token['content'] | b64decode | trim }}"
+
+- name: Join workers
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Download and install k3s agent
+      shell: "curl -sfL https://get.k3s.io | K3S_URL=https://10.0.0.210:6443 K3S_TOKEN={{ hostvars['10.0.0.210']['k3s_token'] }} sh -"
+      args:
+        creates: /etc/systemd/system/k3s-agent.service
