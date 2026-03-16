@@ -1,0 +1,33 @@
+---
+- name: Deploy Kube-Prom-Stack via Helm
+  hosts: localhost
+  connection: local
+  vars_files:
+    - secrets.yml
+  vars:
+    kubeconfig_path: "~/.kube/config"
+    smtp_smarthost: "smtp.gmail.com:587"
+    smtp_auth_username: "jsochin8@gmail.com"
+    smtp_auth_password: "{{ smtp_auth_password }}"
+    receiver_sms_email: "17037892936@vtext.com"
+
+  tasks:
+    - name: Add Prometheus Helm Chart
+      kubernetes.core.helm_repository:
+        name: prometheus-community
+        repo_url: https://prometheus-community.github.io/helm-charts
+    
+    - name: Deploy Prometheus with Alertmanager config
+      shell: |
+        helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+          --namespace monitoring \
+          --create-namespace \
+          --kubeconfig {{ kubeconfig_path }} \
+          --set alertmanager.config.global.smtp_smarthost="{{ smtp_smarthost }}" \
+          --set alertmanager.config.global.smtp_from="{{ smtp_auth_username }}" \
+          --set alertmanager.config.global.smtp_auth_username="{{ smtp_auth_username }}" \
+          --set alertmanager.config.global.smtp_auth_password="{{ smtp_auth_password }}" \
+          --set alertmanager.config.receivers[0].name="sms-alerts" \
+          --set alertmanager.config.receivers[0].email_configs[0].to="{{ receiver_sms_email }}" \
+          --set grafana.service.type=NodePort \
+          --set grafana.service.nodePort=32000
