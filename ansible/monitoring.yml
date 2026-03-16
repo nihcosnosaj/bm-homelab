@@ -7,9 +7,9 @@
   vars:
     kubeconfig_path: "~/.kube/config"
     smtp_smarthost: "smtp.gmail.com:587"
-    smtp_auth_username: "jsochin8@gmail.com"
+    smtp_auth_username: "{{ smtp_auth_username }}"
     smtp_auth_password: "{{ smtp_auth_password }}"
-    receiver_sms_email: "17037892936@vtext.com"
+    receiver_sms_email: "{{ receiver_sms_email }}"
 
   tasks:
     - name: Add Prometheus Helm Chart
