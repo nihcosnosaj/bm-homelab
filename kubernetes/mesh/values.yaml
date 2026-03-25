@@ -1,0 +1,29 @@
+linkerd-control-plane:
+  identity:
+    issuer:
+      scheme: kubernetes.io/tls
+
+  identityTrustAnchorsPEM: |
+    -----BEGIN CERTIFICATE-----
+    MIIBjTCCATSgAwIBAgIRANB6/9Q1oRvnvvahahK82vYwCgYIKoZIzj0EAwIwJTEj
+    MCEGA1UEAxMacm9vdC5saW5rZXJkLmNsdXN0ZXIubG9jYWwwHhcNMjYwMzI1MTcw
+    NzI3WhcNMzYwMzIyMTcwNzI3WjAlMSMwIQYDVQQDExpyb290LmxpbmtlcmQuY2x1
+    c3Rlci5sb2NhbDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABCyASwAYOMgjKFNX
+    Ja4FBnNoZB2i0IfXcHzgBMflzk+lGrcYRimX7wT2X39bL82GddIUdWA9+fKaeTwn
+    0CohFF2jRTBDMA4GA1UdDwEB/wQEAwIBBjASBgNVHRMBAf8ECDAGAQH/AgEBMB0G
+    A1UdDgQWBBRY0cg5kUyrCXNjetr8pFyDqxTQMDAKBggqhkjOPQQDAgNHADBEAiEA
+    t83upAjQW02iKx/cIvjtj49HY7CF1GUwsxdjHNccopECH3zbqgmcJzvJMsd9UXHy
+    7LQ9+gVQ4bnctgkzIILv8tQ=
+    -----END CERTIFICATE-----
+
+  # disabled as my 2-core nodes probably can't handle this
+  ha: false
+
+  proxy:
+    resources:
+      cpu:
+        request: 10m
+        limit: 100m
+      memory:
+        request: 20Mi
+        limit: 100Mi
