@@ -15,3 +15,5 @@ terraform.tfstate*
 *.exe
 *.out
 
+repo-secret.yaml
+*.crt
